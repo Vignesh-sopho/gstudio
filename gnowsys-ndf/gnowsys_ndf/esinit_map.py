@@ -1,5 +1,5 @@
 from bson import json_util
-import os
+import os, errno
 import sys
 import json
 from elasticsearch import Elasticsearch
@@ -22,6 +22,14 @@ def create_map(all_docs):
 				group_map[str(node._id)] = node.name
 			if(node._type == "GSystemType"):
 				create_advanced_map(node)
+			# if(node._type == "GSystem"):
+			# 	update_advanced_map(node)
+
+
+# def update_advanced_map(node):
+# 	member_of = node.member_of
+# 	if(member_of in id_attribute_map.keys()):
+		
 
 def create_advanced_map(node):
 	system_type_map[node.name] = str(node._id)
@@ -38,24 +46,27 @@ def main():
 	print("Starting the map creation process")
 	all_docs = node_collection.find(no_cursor_timeout=True).batch_size(5)
 	create_map(all_docs)
-
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/authormap_clix.json","w")
+	mapping_directory = "/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings"
+	if not os.path.exists(mapping_directory):
+		print("creating mapping directory")
+		os.makedirs(mapping_directory)
+	f = open(mapping_directory+"/authormap.json","w")
 	json.dump(author_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/groupmap_clix.json","w")
+	f = open(mapping_directory+"/groupmap.json","w")
 	json.dump(group_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/gsystemtype_map.json","w")
+	f = open(mapping_directory+"/gsystemtype_map.json","w")
 	json.dump(system_type_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/attribute_map.json","w")
+	f = open(mapping_directory+"/attribute_map.json","w")
 	json.dump(id_attribute_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/relation_map.json","w")
+	f = open(mapping_directory+"/relation_map.json","w")
 	json.dump(id_relation_map,f,indent=4)
 	f.close()
 

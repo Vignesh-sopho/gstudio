@@ -15,11 +15,12 @@ group_map = {}
 gsystemtype_map = {}
 attribute_map = {}
 relation_map = {}
-if(os.path.isdir('/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings')):
-	with open('/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/authormap_clix.json') as fe:
+mapping_directory = '/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings'
+if(os.path.isdir(mapping_directory)):
+	with open(mapping_directory+'/authormap.json') as fe:
 		author_map = json.load(fe)
 
-	with open('/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/groupmap_clix.json') as fe:
+	with open(mapping_directory+'/groupmap.json') as fe:
 		group_map = json.load(fe)
 	
 	
@@ -53,8 +54,11 @@ def get_search(request):
 			query_display = ""
 			group = request.GET.get('group')
 			select = request.GET.get('select')
-			
-			if(select=="Author"):
+			search_select = request.GET.get('search_select')
+			search_filter = request.GET.getlist('checks[]')
+			print(search_filter)
+			if(str(search_select) == '1'):
+				select = "Author"
 				resultSet = search_query(author_index, select, group, query)
 				hits =  "<h3> No of docs found: <b>%d</b></h3> " % len(resultSet)
 				med_list = get_search_results(resultSet)
@@ -64,9 +68,14 @@ def get_search(request):
 					res_list = ['<h3>  Showing contributions of user <b>%s</b> in group <b>%s</b>":</h3> ' % (query,group_map[str(group)]), hits]
 				
 			else:
-				if(select=="all"):
+				if(len(search_filter) == 0 or str(search_filter[0])=="all"):
 					select = "Author,image,video,text,application,audio,Page,NotMedia,Group"
-
+				else:
+					select = ""
+					for i in range(0,len(search_filter)-1):
+						select += search_filter[i]+"," 
+					select += search_filter[len(search_filter) - 1]
+				print(select)
 				phsug_name = get_suggestion_body(query, field_value = "name.trigram", slop_value = 2, field_name_value = "name")
 				phsug_content = get_suggestion_body(query, field_value = "content.trigram", slop_value = 3, field_name_value = "content")
 				phsug_tags = get_suggestion_body(query, field_value = "tags.trigram", slop_value = 2, field_name_value = "tags")
@@ -331,13 +340,13 @@ def search_query(index_name, select, group, query):
 	return resultSet
 
 def get_advanced_search_form(request):
-	with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/gsystemtype_map.json") as gm:
+	with open(mapping_directory+"/gsystemtype_map.json") as gm:
 		gsystemtype_map = json.load(gm)
 
-	with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/attribute_map.json") as am:
+	with open(mapping_directory+"/attribute_map.json") as am:
 		attribute_map = json.load(am)
 
-	with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/relation_map.json") as rm:
+	with open(mapping_directory+"/relation_map.json") as rm:
 		relation_map = json.load(rm)
 
 	gsystemtype_map_str = json.dumps(gsystemtype_map)

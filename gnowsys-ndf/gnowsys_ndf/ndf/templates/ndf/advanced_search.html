@@ -23,34 +23,30 @@
 	</style>
 	<script type="text/javascript"></script>
 	<script type="text/javascript">
+		// the three maps sent from python esearch.py get_advanced_search_form function
 		var node_types_ch = {{ gsystemtype_map | safe }};
 		var attribute_type_ch = {{ attribute_map | safe }};
 		var relation_types_ch = {{ relation_map | safe }};
-		console.log(node_types_ch);
-		console.log(attribute_type_ch);
-		console.log(relation_types_ch);
-		
-		$('#attribute_types_col').css('display', 'inline-block');
-		$('#relation_types_col').css('display', 'inline-block');
+		// html for drop down list
 		var drop_down_list = "<select name='node_type' id='nt_drop_down'><option value='none'>Select Node Type</option>"
 		var i;
+		// appending all the node types to the drop down list
 		for(var system_type_name in node_types_ch)
 		{
 			if(node_types_ch.hasOwnProperty(system_type_name))
 			{
 				var type_id = node_types_ch[system_type_name];
-				//console.log(type_id);
 				drop_down_list += "<option value='"+type_id+"'>"+system_type_name+"</option>";
 			}
 		}
 		$(document).ready(function() {
-			var attr_selected_count = 0;
-			var reln_selected_count = 0;
+			var attr_selected_count = 0; // number of attributes selected 
+			var reln_selected_count = 0; // number of relations selected
 			$('#node_types_col').append(drop_down_list);
 			$('#nt_drop_down').on("change",function(){
-				console.log(this.value);
-				var checkbox_attr = "";
-				var checkbox_reln = "";
+				//console.log(this.value);
+				var checkbox_attr = ""; // html for attribute checkboxes
+				var checkbox_reln = ""; // html for relation checkboxes
 				$('#input_attributes').html("");
 				$('#input_relations').html("");
 				if(this.value == "none")
@@ -95,8 +91,9 @@
 				$('#attribute_types_col').append(checkbox_attr);
 				$('#relation_types_col').append(checkbox_reln);
 			});
-			var selected_attributes = {};
+			var selected_attributes = {}; // selected_attributes is a dictionary where the key is the attribute name and value is the value entered by user in the text box
 			var selected_relations = {};
+			// on selecting a checkbox, a textbox is displayed with the attribute name
 			$('#attribute_types_col').on('click',function() {
 				selected_attributes = {};
 				var attr_checkboxes = $("input[name='at_cb']");
@@ -114,6 +111,7 @@
 				$('#input_attributes').append(selectedAttr);
 			
 			});
+			// on selecting a checkbox, a textbox is displayed with the relation name
 			$('#relation_types_col').on('click',function() {
 				selected_relations = {};
 				var reln_checkboxes = $("input[name='rt_cb']");
@@ -130,14 +128,9 @@
 				});
 				$('#input_relations').append(selectedReln);
 			});
-			// $('#btn').on('click',function(){
-			// 	console.log(selected_attributes);
-			// 	console.log(selected_relations);
-			// });
+			// on submitting the form, first the input is validated and  if input is valid, an ajax call is made which sends the node type selected, both the selcted_attributes and selected_relations dictionary
 			$('#user_form').on('submit',function(e) {
 				e.preventDefault();
-				// var num_attr_selected = selected_attributes.length;
-				// var num_reln_selected = selected_relations.length;
 				var i = 1;
 				var flag = true;
 				for(var key in selected_attributes)
@@ -184,16 +177,8 @@
 				}
 			});
 		});
-		// fun
-		// $('#user_form').on('submit',function(e) {
-		// 	e.preventDefault();
-		// 	$.ajax({
-		// 		type:'GET',
-		// 		url: '',
-		// 		data: getDta()
-		// 	});
-		// });
 	</script>
+	
 	<div id="node_types_col"></div>
 	<div id="attribute_types_col"></div>
 	<div id="relation_types_col"></div>

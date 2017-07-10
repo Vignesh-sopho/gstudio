@@ -13,24 +13,13 @@ from passwords.fields import PasswordField
 CHOICES=[("all",'All'),("Author",'Users'),("image",'Images'),("video",'Video'),("text",'Text'),("audio","Audio"),("Page",'Page'),("Group",'Courses')]
 GROUP_CHOICES=[]
 GROUP_CHOICES.append(("all","All"))
+SEARCH_CHOICE = [(0,'Search for Data'),(1,'Contributions of an Author')]
 group_map = {}
-attribute_map = {}
 
-secondlevel_choices = []
+mapping_directory = '/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings'
 
-with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/groupmap_clix.json", 'r') as gm:
+with open(mapping_directory+"/groupmap.json", 'r') as gm:
     group_map = json.load(gm)
-
-with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/attribute_map.json") as am:
-    attribute_map = json.load(am)
-
-# for i in ATTRIBUTE_CHOICES:
-#     if i[0] != '--Select--':
-#         l = []
-#         for val in attribute_map[i[0]]:
-#             tup = (val,val)
-#             l.append(tup)
-#         secondlevel_choices.append(l)
 
 for l in group_map.keys():
     tup = (l, group_map[l])
@@ -41,8 +30,7 @@ class SearchForm(forms.Form):
     query = forms.CharField(label = '', widget = forms.TextInput(attrs={'placeholder': 'Search for'}), error_messages = False)
     group = forms.ChoiceField(label = "Group", widget = forms.Select, choices = GROUP_CHOICES)
     select = forms.ChoiceField(label = "Filter", widget = forms.Select, choices = CHOICES)
-
-
+    search_select = forms.ChoiceField(label = "Search for", widget = forms.Select(attrs={'placeholder': 'Search for'}), choices = SEARCH_CHOICE)
 class NodeForm(DocumentForm):
 
     tags = forms.CharField(max_length=250)

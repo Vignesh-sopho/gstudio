@@ -7,14 +7,31 @@
 	h3 {text-align:center;}
 	p {text-align:center;}
 	div.pagination {display: block; width: 10%; margin: 0 auto; }
+	#filter {
+		float: left;
+	}
+	#ss {
+		float: right;
+	}
 </style>
-
 <div class="form_class"> 
 	<form action="" method="get">
 	<ul class="small-block-grid-1 medium-block-grid-3 large-block-grid-4">
     <li>{{form.query}}</li>
     <li>{{form.group}}</li>
     <li>{{form.select}}</li>
+    <br />
+    <li id="ss">{{form.search_select}}</li>
+    <div id="filter">
+	    <input type="checkbox" name="checks[]" value="all" /> All
+		<input type="checkbox" name="checks[]" value="Author" /> Users
+		<input type="checkbox" name="checks[]" value="image" /> Images
+		<input type="checkbox" name="checks[]" value="video" /> Video
+	    <input type="checkbox" name="checks[]" value="text" /> Text
+	    <input type="checkbox" name="checks[]" value="audio" /> Audio
+	    <input type="checkbox" name="checks[]" value="Page" /> Page
+	    <input type="checkbox" name="checks[]" value="Group" /> Courses
+    </div>
     <li><input type="submit" value="Search" /></li>
     </ul>
     </form>
