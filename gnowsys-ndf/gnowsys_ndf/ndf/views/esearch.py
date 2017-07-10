@@ -8,27 +8,35 @@ from elasticsearch import Elasticsearch
 from gnowsys_ndf.ndf.forms import SearchForm
 from gnowsys_ndf.ndf.models import *
 from gnowsys_ndf.settings import GSTUDIO_SITE_NAME,GSTUDIO_NO_OF_OBJS_PP
-
+from django.utils import simplejson
 es = Elasticsearch(['http://elsearch:changeit@gsearch:9200'])
 author_map = {}
 group_map = {}
-
+gsystemtype_map = {}
+attribute_map = {}
+relation_map = {}
 if(os.path.isdir('/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings')):
 	with open('/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/authormap_clix.json') as fe:
 		author_map = json.load(fe)
 
 	with open('/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/groupmap_clix.json') as fe:
 		group_map = json.load(fe)
+	
+	
 
 else:
 	print("No mapping found!")
+
+
+
+
 
 hits = ""
 med_list = []		 #contains all the search results
 res_list = []		 #contains the header of the search results
 results = []		 #contains a single page's results
 author_index = "author_" + GSTUDIO_SITE_NAME
-
+gsystemtype_index = "node_type_" + GSTUDIO_SITE_NAME
 def get_search(request): 
 	global med_list
 	global res_list
@@ -270,6 +278,16 @@ def resources_in_group(res,group):
 
 def search_query(index_name, select, group, query):
 	siz = 100
+	if(index_name == gsystemtype_index):
+		doctype = select
+		body = {
+					"query":{
+						"match_all":{}
+					},
+					"from": 0,
+					"size": siz
+				} 
+
 	if(index_name == author_index):
 		try:
 			doctype = author_map[str(query)]
@@ -312,3 +330,35 @@ def search_query(index_name, select, group, query):
 
 	return resultSet
 
+def get_advanced_search_form(request):
+	with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/gsystemtype_map.json") as gm:
+		gsystemtype_map = json.load(gm)
+
+	with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/attribute_map.json") as am:
+		attribute_map = json.load(am)
+
+	with open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/relation_map.json") as rm:
+		relation_map = json.load(rm)
+
+	gsystemtype_map_str = json.dumps(gsystemtype_map)
+	attribute_map_str = json.dumps(attribute_map)
+	relation_map_str = json.dumps(relation_map)
+	return render(request, 'ndf/advanced_search.html',{"gsystemtype_map":gsystemtype_map_str,'attribute_map':attribute_map_str,'relation_map':relation_map_str})
+
+def advanced_search(request):
+	node_type = request.GET.get("node_type")
+	arr_attributes = json.loads(request.GET["arr_attributes"])
+	arr_relations = json.loads(request.GET["arr_relations"])
+
+	# global med_list
+
+	# resultSet = search_query(index_name=gsystemtype_index, select=node_type, group="all",query="") # get all the docs in the gsystem index with type = node_type	
+	# for doc in resultSet:
+	# 	src = doc['_source']
+	# 	flag = True
+	# 	attribute_keys = {}
+	# 	for dictio in src['attribute_set']:
+	# 		attribute_keys[dictio.keys()[0]] = dictio[dictio.keys()[0]]
+	# 	print(attribute_keys)
+	# 	# for attr in arr_attributes.keys():
+	# 	# 	if(attr in src['attribute_set'])

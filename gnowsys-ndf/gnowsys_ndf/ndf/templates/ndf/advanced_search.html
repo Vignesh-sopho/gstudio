@@ -1,0 +1,205 @@
+{% extends "ndf/gbase.html" %}
+{% block body_content %}	
+	<style type="text/css">
+		#node_types_col {
+			float: left;
+		}
+		#attribute_types_col {
+			float: left;
+		}
+		#relation_types_col {
+			float: left;
+		}
+		#input_attributes {
+			float: left;
+		}
+		#input_relations {
+			float: left;
+		}
+		#submit_btn {
+			float: right;
+		}
+		
+	</style>
+	<script type="text/javascript"></script>
+	<script type="text/javascript">
+		var node_types_ch = {{ gsystemtype_map | safe }};
+		var attribute_type_ch = {{ attribute_map | safe }};
+		var relation_types_ch = {{ relation_map | safe }};
+		console.log(node_types_ch);
+		console.log(attribute_type_ch);
+		console.log(relation_types_ch);
+		
+		$('#attribute_types_col').css('display', 'inline-block');
+		$('#relation_types_col').css('display', 'inline-block');
+		var drop_down_list = "<select name='node_type' id='nt_drop_down'><option value='none'>Select Node Type</option>"
+		var i;
+		for(var system_type_name in node_types_ch)
+		{
+			if(node_types_ch.hasOwnProperty(system_type_name))
+			{
+				var type_id = node_types_ch[system_type_name];
+				//console.log(type_id);
+				drop_down_list += "<option value='"+type_id+"'>"+system_type_name+"</option>";
+			}
+		}
+		$(document).ready(function() {
+			var attr_selected_count = 0;
+			var reln_selected_count = 0;
+			$('#node_types_col').append(drop_down_list);
+			$('#nt_drop_down').on("change",function(){
+				console.log(this.value);
+				var checkbox_attr = "";
+				var checkbox_reln = "";
+				$('#input_attributes').html("");
+				$('#input_relations').html("");
+				if(this.value == "none")
+				{
+					checkbox_attr += "";
+					checkbox_reln += "";
+					$('#attribute_types_col').html('');
+					$('#relation_types_col').html('');
+				}
+				else
+				{
+					var possible_attributes = attribute_type_ch[this.value];
+					var possible_relations = relation_types_ch[this.value];
+					$('#attribute_types_col').html('<p>Attributes</p><br />');
+					$('#relation_types_col').html('<p>Relations</p><br />');
+					console.log(possible_attributes);
+					console.log(possible_relations);
+					if(possible_attributes.length != 0)
+					{
+						for(var i = 0; i < possible_attributes.length; i++)
+						{
+							checkbox_attr += "<input type='checkbox' name='at_cb' value='"+possible_attributes[i]+"'/>"+possible_attributes[i]+"<br />";
+						}	
+					}
+					else
+					{
+						checkbox_attr += "<p>No attributes for this GSsystemType</p>";
+					}
+					if(possible_relations.length != 0)
+					{
+						for(var i = 0; i < possible_relations.length; i++)
+						{
+							//console.log(reln)
+							checkbox_reln += "<input type='checkbox' name='rt_cb' value='"+possible_relations[i]+"'/>"+possible_relations[i]+"<br />";
+						}
+					}
+					else
+					{
+						checkbox_reln += "<p>No relations for this GSsystemType</p>";
+					}
+				}
+				$('#attribute_types_col').append(checkbox_attr);
+				$('#relation_types_col').append(checkbox_reln);
+			});
+			var selected_attributes = {};
+			var selected_relations = {};
+			$('#attribute_types_col').on('click',function() {
+				selected_attributes = {};
+				var attr_checkboxes = $("input[name='at_cb']");
+				attr_selected_count = 0;
+				var selectedAttr = "Enter Attibute value:<br />"
+				$('#input_attributes').html("");
+				attr_checkboxes.each(function() {
+					if(this.checked == true)
+					{
+						selected_attributes[$(this).val()] = "";
+						attr_selected_count++;
+						selectedAttr += $(this).val()+":"+"<input type='text' id='a"+attr_selected_count+"'><br />";
+					}
+				});
+				$('#input_attributes').append(selectedAttr);
+			
+			});
+			$('#relation_types_col').on('click',function() {
+				selected_relations = {};
+				var reln_checkboxes = $("input[name='rt_cb']");
+				reln_selected_count = 0;
+				var selectedReln = "Enter Relation value:<br />"
+				$('#input_relations').html("");
+				reln_checkboxes.each(function() {
+					if(this.checked == true)
+					{
+						selected_relations[$(this).val()] = "";
+						reln_selected_count++;
+						selectedReln += $(this).val()+":"+"<input type='text' id='r"+reln_selected_count+"'><br />";
+					}
+				});
+				$('#input_relations').append(selectedReln);
+			});
+			// $('#btn').on('click',function(){
+			// 	console.log(selected_attributes);
+			// 	console.log(selected_relations);
+			// });
+			$('#user_form').on('submit',function(e) {
+				e.preventDefault();
+				// var num_attr_selected = selected_attributes.length;
+				// var num_reln_selected = selected_relations.length;
+				var i = 1;
+				var flag = true;
+				for(var key in selected_attributes)
+				{
+					if($('#a'+i).val() == "")
+					{
+						$('#a'+i).css('border-color','red');
+						flag = false;
+					}
+					else
+					{
+						selected_attributes[key] = $('#a'+i).val();
+					}
+					i+=1
+				}
+				i = 1;	
+				for(var key in selected_relations)
+				{
+					if($('#r'+i).val() == "")
+					{
+						$('#r'+i).css('border-color','red');
+						flag = false;
+					}
+					else
+					{
+						selected_relations[key] = $('#r'+i).val();
+					}
+				}
+				if(flag)
+				{
+					console.log(selected_attributes);
+					console.log(selected_relations);
+					attr = JSON.stringify(selected_attributes);
+					reln = JSON.stringify(selected_relations);
+					$.ajax({
+						type: 'GET',
+						url: "{% url 'advanced_search' %}",
+						data:{
+							node_type:$('#nt_drop_down').val(),
+							arr_attributes:attr,
+							arr_relations:reln
+						}
+					});
+				}
+			});
+		});
+		// fun
+		// $('#user_form').on('submit',function(e) {
+		// 	e.preventDefault();
+		// 	$.ajax({
+		// 		type:'GET',
+		// 		url: '',
+		// 		data: getDta()
+		// 	});
+		// });
+	</script>
+	<div id="node_types_col"></div>
+	<div id="attribute_types_col"></div>
+	<div id="relation_types_col"></div>
+	<form id="user_form">
+		<div id="input_attributes"></div>
+		<div id="input_relations"></div>
+		<input id="submit_btn" type="submit" value="Search">
+	</form>
+{% endblock %}
