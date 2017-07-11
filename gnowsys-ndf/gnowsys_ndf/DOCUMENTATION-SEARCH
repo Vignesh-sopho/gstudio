@@ -27,6 +27,7 @@ Our search url can be found in __init__.py file of urls folder. In the search fo
 
 If group is also selected with Users filter, the contributions of that user in a particular group will be searched.
 ***********************************************************************************************************************************
+
 First run the esinit_map.py script which creates all the necessary mappings then run the es_init.py script which will index all documents into elasticsearch. 
 
 index→ analogous to database
@@ -41,7 +42,6 @@ Author Map : Mapping from author name to PostGRESQL ID of that author
 Group Map : Mapping from Group ID to Group name.
 Gsystem Type Map : Mapping from GSystemType name to ID.
 Relation Map : Mapping from GSystemType ID to possible relation names for that GSystemType
-
 
 #main(): 
  

@@ -1,3 +1,4 @@
+from bson import json_util
 import re
 import json
 import os
@@ -5,10 +6,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from elasticsearch import Elasticsearch		
-from gnowsys_ndf.ndf.forms import SearchForm
+from gnowsys_ndf.ndf.forms import SearchForm, AdvancedSearchForm
 from gnowsys_ndf.ndf.models import *
 from gnowsys_ndf.settings import GSTUDIO_SITE_NAME,GSTUDIO_NO_OF_OBJS_PP
-from django.utils import simplejson
 es = Elasticsearch(['http://elsearch:changeit@gsearch:9200'])
 author_map = {}
 group_map = {}
@@ -344,6 +344,7 @@ def search_query(index_name, select, group, query):
 			i+=siz	
 
 	return resultSet
+
 
 def get_advanced_search_form(request):
 	with open(mapping_directory+"/gsystemtype_map.json") as gm:

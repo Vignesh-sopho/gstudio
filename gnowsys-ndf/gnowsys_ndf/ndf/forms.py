@@ -12,6 +12,11 @@ from passwords.fields import PasswordField
 
 CHOICES=[("all",'All'),("Author",'Users'),("image",'Images'),("video",'Video'),("text",'Text'),("audio","Audio"),("Page",'Page'),("Group",'Courses')]
 GROUP_CHOICES=[]
+NODE_TYPE_CHOICES = []
+ATTRIBUTE_CHOICES = {}
+RELATION_CHOICES = {}
+
+
 GROUP_CHOICES.append(("all","All"))
 SEARCH_CHOICE = [(0,'Search for Data'),(1,'Contributions of an Author')]
 group_map = {}
@@ -25,6 +30,7 @@ for l in group_map.keys():
     tup = (l, group_map[l])
     tup = tuple(tup)
     GROUP_CHOICES.append(tup)
+
 
 class SearchForm(forms.Form):
     query = forms.CharField(label = '', widget = forms.TextInput(attrs={'placeholder': 'Search for'}), error_messages = False)

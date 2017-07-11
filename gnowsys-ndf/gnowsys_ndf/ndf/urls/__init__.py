@@ -51,6 +51,10 @@ urlpatterns = patterns('',
     # (r'^mobwrite/', 'gnowsys_ndf.mobwrite.views.mobwrite'),
     # --end of mobwrite
 
+    url(r'^esearch/?', get_search, name="get_search"),
+    url(r'^advanced/?', advanced_search, name="advanced_search"),
+    #url(r'^esearch//?',advanced_search,name='advanced_search')
+
     # url(r'^(?P<group_id>[^/]+)/mailclient[/]error[/](?P<error_obj>[\w-]+)$', 'gnowsys_ndf.ndf.views.mailclient.mailclient_error_display', name='mailclient_error_display'),
 
     url(r'^$', homepage, {"group_id": "home"}, name="homepage"),
