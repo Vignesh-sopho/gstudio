@@ -31,17 +31,18 @@ else:
 
 
 
-
 hits = ""
 med_list = []		 #contains all the search results
 res_list = []		 #contains the header of the search results
 results = []		 #contains a single page's results
 author_index = "author_" + GSTUDIO_SITE_NAME
 gsystemtype_index = "node_type_" + GSTUDIO_SITE_NAME
+append_to_url = ""
 def get_search(request): 
 	global med_list
 	global res_list
 	global results
+	global append_to_url
 	form = SearchForm(request.GET)
 	query = request.GET.get("query")
 
@@ -59,6 +60,7 @@ def get_search(request):
 			print(search_filter)
 			if(str(search_select) == '1'):
 				select = "Author"
+				append_to_url = ""
 				resultSet = search_query(author_index, select, group, query)
 				hits =  "<h3> No of docs found: <b>%d</b></h3> " % len(resultSet)
 				med_list = get_search_results(resultSet)
@@ -68,12 +70,16 @@ def get_search(request):
 					res_list = ['<h3>  Showing contributions of user <b>%s</b> in group <b>%s</b>":</h3> ' % (query,group_map[str(group)]), hits]
 				
 			else:
+				append_to_url = ""
 				if(len(search_filter) == 0 or str(search_filter[0])=="all"):
+					append_to_url += "&checks%5B%5D=all"
 					select = "Author,image,video,text,application,audio,Page,NotMedia,Group"
 				else:
 					select = ""
 					for i in range(0,len(search_filter)-1):
-						select += search_filter[i]+"," 
+						select += search_filter[i]+","
+						append_to_url += "&checks%5B%5D="+search_filter[i]
+					append_to_url += "&checks%5B%5D="+search_filter[len(search_filter) - 1]
 					select += search_filter[len(search_filter) - 1]
 				print(select)
 				phsug_name = get_suggestion_body(query, field_value = "name.trigram", slop_value = 2, field_name_value = "name")
@@ -208,7 +214,7 @@ def get_search(request):
 			results = paginator.page(paginator.num_pages)
 
 
-		return render(request, 'ndf/sform.html', {'form': form, 'header':res_list, 'content': results})
+		return render(request, 'ndf/sform.html', {'form': form, 'header':res_list, 'content': results,'append_to_url':append_to_url})
 
 	return render(request, 'ndf/sform.html', {'form': form})
 	

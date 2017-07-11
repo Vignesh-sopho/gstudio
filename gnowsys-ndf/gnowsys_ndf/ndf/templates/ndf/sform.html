@@ -24,7 +24,6 @@
     <li id="ss">{{form.search_select}}</li>
     <div id="filter">
 	    <input type="checkbox" name="checks[]" value="all" /> All
-		<input type="checkbox" name="checks[]" value="Author" /> Users
 		<input type="checkbox" name="checks[]" value="image" /> Images
 		<input type="checkbox" name="checks[]" value="video" /> Video
 	    <input type="checkbox" name="checks[]" value="text" /> Text
@@ -58,7 +57,7 @@
 		  {% ifequal num content.number %}
 		    <span class="current"><b>{{ num }}</b></span>
 		  {% else %}
-		    <a href="?page={{ num }}&query={{ request.GET.query }}&group={{ request.GET.group }}&select={{ request.GET.select }}">{{ num }}</a>
+		    <a href="?page={{ num }}&query={{ request.GET.query }}&group={{ request.GET.group }}&select={{ request.GET.select }}{{ append_to_url }}&search_select={{ request.GET.search_select }}">{{ num }}</a>
 		  {% endifequal %} 
 		{% endfor %}
 	</span>
