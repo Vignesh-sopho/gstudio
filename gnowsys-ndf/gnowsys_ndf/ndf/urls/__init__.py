@@ -20,10 +20,6 @@ from gnowsys_ndf.ndf.views.methods import tag_info
 from gnowsys_ndf.ndf.views.custom_app_view import custom_app_view, custom_app_new_view
 from gnowsys_ndf.ndf.views import rpc_resources
 
-
-from gnowsys_ndf.ndf.views.esearch import get_search,get_advanced_search_form, advanced_search
-
-
 if GSTUDIO_SITE_NAME.lower() == 'clix':
     login_template = 'registration/login_clix.html'
 else:
@@ -41,12 +37,6 @@ urlpatterns = patterns('',
 
     # django's admin site url's
     (r'^admin/', include(admin.site.urls)),
-    #integrating esearch application in gstudio
-    
-    url(r'^esearch/?', get_search, name="get_search"),
-    url(r'^advanced_form/?', get_advanced_search_form, name="advanced_search_form"),
-    url(r'^advanced_search/?', advanced_search, name="advanced_search"),
-
     # --mobwrite-- commented for time being
     # (r'^raw/(?P<name>.+)/', 'gnowsys_ndf.mobwrite.views.raw'),
     # (r'^r/(?P<name>.+)/', 'gnowsys_ndf.mobwrite.views.raw'),
@@ -61,13 +51,11 @@ urlpatterns = patterns('',
     url(r'^welcome/?', landing_page, name="landing_page"),
     #url(r'^esearch/advanced/?', get_triples, name="get_triples"),
     url(r'^esearch/?', get_search, name="get_search"),
+    url(r'^advanced_form/?', get_advanced_search_form, name="advanced_search_form"),
+    url(r'^advanced_search/?', advanced_search, name="advanced_search"),
     url(r'^captcha/', include('captcha.urls')),
     (r'^', include('gnowsys_ndf.ndf.urls.captcha')),
 
-    url(r'^esearch/?', get_search, name="get_search"),
-    url(r'^advanced_form/?', get_advanced_search_form, name="advanced_search_form"),
-    url(r'^advanced_search/?', advanced_search, name="advanced_search"),
-    #url(r'^esearch/get_mapping_json/(?P<json_type>[^/]+)/?$', '', name=''),
     # all main apps
     (r'^(?P<group_id>[^/]+)/mailclient', include('gnowsys_ndf.ndf.urls.mailclient')),
     (r'^(?P<group_id>[^/]+)/analytics', include('gnowsys_ndf.ndf.urls.analytics')),
