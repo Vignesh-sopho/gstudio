@@ -20,7 +20,9 @@ from gnowsys_ndf.ndf.views.methods import tag_info
 from gnowsys_ndf.ndf.views.custom_app_view import custom_app_view, custom_app_new_view
 from gnowsys_ndf.ndf.views import rpc_resources
 
-from gnowsys_ndf.ndf.views.esearch import get_search, advanced_search
+
+from gnowsys_ndf.ndf.views.esearch import get_search,get_advanced_search_form, advanced_search
+
 
 if GSTUDIO_SITE_NAME.lower() == 'clix':
     login_template = 'registration/login_clix.html'
@@ -62,6 +64,10 @@ urlpatterns = patterns('',
     url(r'^captcha/', include('captcha.urls')),
     (r'^', include('gnowsys_ndf.ndf.urls.captcha')),
 
+    url(r'^esearch/?', get_search, name="get_search"),
+    url(r'^advanced_form/?', get_advanced_search_form, name="advanced_search_form"),
+    url(r'^advanced_search/?', advanced_search, name="advanced_search"),
+    #url(r'^esearch/get_mapping_json/(?P<json_type>[^/]+)/?$', '', name=''),
     # all main apps
     (r'^(?P<group_id>[^/]+)/mailclient', include('gnowsys_ndf.ndf.urls.mailclient')),
     (r'^(?P<group_id>[^/]+)/analytics', include('gnowsys_ndf.ndf.urls.analytics')),

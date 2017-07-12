@@ -144,7 +144,6 @@ create_advanced_map(document) : This function is used to create the gsystem type
  
 Res = es.search returns a json body. Res[“hits”][“hits”] is an array of search results.  
 
-
 ******Documentation for advanced_search.html in templates/ndf folder******
 
 This file is used for rendering the advanced search form. The gsystem type map, attribute map and relation map is passed by python get_advanced_form function in esearch.py.

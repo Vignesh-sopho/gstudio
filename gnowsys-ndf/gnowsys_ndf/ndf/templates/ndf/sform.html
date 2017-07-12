@@ -17,8 +17,13 @@
 	#selid {width: 200px; padding-top: 5px}
 	#but {padding-top: 10px; margin-right: 0}
 	#fs {padding-top: 5px; width:200px;}
+	#filter {
+		float: left;
+	}
+	#ss {
+		float: right;
+	}
 </style>
-
 <div class="form_class"> 
 	<form action="" method="get">
 	<ul class="small-block-grid-1 medium-block-grid-3 large-block-grid-4">
@@ -37,6 +42,11 @@
      <li>{{form.search_select}}</li>
      <br />
      <div id="filter">
+    <li>{{form.group}}</li>
+    <li>{{form.select}}</li>
+    <br />
+    <li id="ss">{{form.search_select}}</li>
+    <div id="filter">
 	    <input type="checkbox" name="checks[]" value="all" /> All
 		<input type="checkbox" name="checks[]" value="Author" /> Users
 		<input type="checkbox" name="checks[]" value="image" /> Images

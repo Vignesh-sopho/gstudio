@@ -1,5 +1,5 @@
 from bson import json_util
-import os
+import os, errno
 import sys
 import json
 from elasticsearch import Elasticsearch
@@ -45,6 +45,14 @@ def create_map(all_docs):
 
 			if(node._type == "GSystemType"):
 				create_advanced_map(node)
+			# if(node._type == "GSystem"):
+			# 	update_advanced_map(node)
+
+
+# def update_advanced_map(node):
+# 	member_of = node.member_of
+# 	if(member_of in id_attribute_map.keys()):
+		
 
 def create_advanced_map(node):
 	system_type_map[node.name] = str(node._id)
@@ -65,11 +73,11 @@ def main():
 	print("Starting the map creation process")
 	all_docs = node_collection.find(no_cursor_timeout=True).batch_size(5)
 	create_map(all_docs)
-
 	for key,val in id_attribute_map.iteritems():
 		id_attribute_map[key] = list(set(val))
 	for key,val in id_relation_map.iteritems():
 		id_relation_map[key] = list(set(val))
+		
 	mapping_directory = "/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings"
 	if not os.path.exists(mapping_directory):
 		print("creating mapping directory")

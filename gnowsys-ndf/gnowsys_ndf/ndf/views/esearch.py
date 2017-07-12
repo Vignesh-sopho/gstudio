@@ -9,20 +9,31 @@ from elasticsearch import Elasticsearch
 from gnowsys_ndf.ndf.forms import SearchForm
 from gnowsys_ndf.ndf.models import *
 from gnowsys_ndf.settings import GSTUDIO_SITE_NAME,GSTUDIO_NO_OF_OBJS_PP
-
+from django.utils import simplejson
 es = Elasticsearch(['http://elsearch:changeit@gsearch:9200'])
 author_map = {}
 group_map = {}
+
+gsystemtype_map = {}
+attribute_map = {}
+relation_map = {}
 
 mapping_directory = '/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings'
 if(os.path.isdir(mapping_directory)):
 	with open(mapping_directory+'/authormap.json') as fe:
 		author_map = json.load(fe)
+
 	with open(mapping_directory+'/groupmap.json') as fe:
 		group_map = json.load(fe)
+	
+	
 
 else:
 	print("No mapping found!")
+
+
+
+
 
 hits = ""
 med_list = []		 #contains all the search results
@@ -37,6 +48,7 @@ gsystemtype_index = "node_type_" + GSTUDIO_SITE_NAME
 GROUP_CHOICES=["All"]
 for name in group_map.keys():
     GROUP_CHOICES.append(name)
+
 def get_search(request): 
 	global med_list
 	global res_list
@@ -59,11 +71,12 @@ def get_search(request):
 		if(page is None):
 			print(query)
 			query_display = ""
-			#group = request.GET.get('group')
+			group = request.GET.get('group')
+			select = request.GET.get('select')
 			search_select = request.GET.get('search_select')
 			search_filter = request.GET.getlist('checks[]')
+			print(search_filter)
 			if(str(search_select) == '1'):
-				append_to_url = ""
 				select = "Author"
 				resultSet = search_query(author_index, select, group, query)
 				hits =  "<h3> No of docs found: <b>%d</b></h3> " % len(resultSet)
@@ -301,6 +314,16 @@ def resources_in_group(res,group):
 
 def search_query(index_name, select, group, query):
 	siz = 100
+	if(index_name == gsystemtype_index):
+		doctype = select
+		body = {
+					"query":{
+						"match_all":{}
+					},
+					"from": 0,
+					"size": siz
+				} 
+
 	if(index_name == author_index):
 		try:
 			doctype = author_map[str(query)]
@@ -346,7 +369,6 @@ def search_query(index_name, select, group, query):
 
 	return resultSet
 
-
 def get_advanced_search_form(request):
 	with open(mapping_directory+"/gsystemtype_map.json") as gm:
 		gsystemtype_map = json.load(gm)
@@ -366,7 +388,7 @@ def advanced_search(request):
 	node_type = request.GET.get("node_type")
 	arr_attributes = json.loads(request.GET["arr_attributes"])
 	arr_relations = json.loads(request.GET["arr_relations"])
-
+	
 	query_body = ""
 	if(len(arr_attributes)>0 or len(arr_relations)>0):
 		query_body = '{ "query": {"bool": { "must": ['
