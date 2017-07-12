@@ -3,7 +3,7 @@ import re
 import json
 import os
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from elasticsearch import Elasticsearch		
 from gnowsys_ndf.ndf.forms import SearchForm
@@ -355,7 +355,8 @@ def advanced_search(request):
 	node_type = request.GET.get("node_type")
 	arr_attributes = json.loads(request.GET["arr_attributes"])
 	arr_relations = json.loads(request.GET["arr_relations"])
-
+	print("hey")
+	return HttpResponse(arr_attributes,content_type='application/json')
 	# global med_list
 
 	# resultSet = search_query(index_name=gsystemtype_index, select=node_type, group="all",query="") # get all the docs in the gsystem index with type = node_type	

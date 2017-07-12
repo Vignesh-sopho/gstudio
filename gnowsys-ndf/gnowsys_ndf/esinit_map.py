@@ -38,24 +38,27 @@ def main():
 	print("Starting the map creation process")
 	all_docs = node_collection.find(no_cursor_timeout=True).batch_size(5)
 	create_map(all_docs)
-
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/authormap_clix.json","w")
+	mapping_directory = "/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings"
+	if not os.path.exists(mapping_directory):
+		print("creating mapping directory")
+		os.makedirs(mapping_directory)
+	f = open(mapping_directory+"/authormap.json","w")
 	json.dump(author_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/groupmap_clix.json","w")
+	f = open(mapping_directory+"/groupmap.json","w")
 	json.dump(group_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/gsystemtype_map.json","w")
+	f = open(mapping_directory+"/gsystemtype_map.json","w")
 	json.dump(system_type_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/attribute_map.json","w")
+	f = open(mapping_directory+"/attribute_map.json","w")
 	json.dump(id_attribute_map,f,indent=4)
 	f.close()
 
-	f = open("/home/docker/code/gstudio/gnowsys-ndf/gnowsys_ndf/ndf/mappings/relation_map.json","w")
+	f = open(mapping_directory+"/relation_map.json","w")
 	json.dump(id_relation_map,f,indent=4)
 	f.close()
 

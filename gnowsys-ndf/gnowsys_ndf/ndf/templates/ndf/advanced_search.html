@@ -173,6 +173,10 @@
 							node_type:$('#nt_drop_down').val(),
 							arr_attributes:attr,
 							arr_relations:reln
+						},
+						success: function(a) {
+							$('#dq').html(a);
+							alert(a);
 						}
 					});
 				}
@@ -188,4 +192,5 @@
 		<div id="input_relations"></div>
 		<input id="submit_btn" type="submit" value="Search">
 	</form>
+	<p id='dq'></p>
 {% endblock %}
