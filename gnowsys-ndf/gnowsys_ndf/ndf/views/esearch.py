@@ -72,7 +72,6 @@ def get_search(request):
 			print(query)
 			query_display = ""
 			group = request.GET.get('group')
-			select = request.GET.get('select')
 			search_select = request.GET.get('search_select')
 			search_filter = request.GET.getlist('checks[]')
 			print(search_filter)
@@ -388,7 +387,7 @@ def advanced_search(request):
 	node_type = request.GET.get("node_type")
 	arr_attributes = json.loads(request.GET["arr_attributes"])
 	arr_relations = json.loads(request.GET["arr_relations"])
-	
+
 	query_body = ""
 	if(len(arr_attributes)>0 or len(arr_relations)>0):
 		query_body = '{ "query": {"bool": { "must": ['

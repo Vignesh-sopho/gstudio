@@ -39,7 +39,6 @@ for name,gid in group_map.iteritems():
 class SearchForm(forms.Form):
     query = forms.CharField(label = '', widget = forms.TextInput(attrs={'placeholder': 'Search for'}))
     group = forms.ChoiceField(label = "Group", widget = forms.Select, choices = GROUP_CHOICES)
-    select = forms.ChoiceField(label = "Filter", widget = forms.Select, choices = CHOICES)
     search_select = forms.ChoiceField(label = "Search for", widget= forms.Select, choices= SEARCH_CHOICE)
 
 class NodeForm(DocumentForm):
