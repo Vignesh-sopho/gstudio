@@ -348,7 +348,7 @@ def search_query(index_name, select, group, query):
 
 
 def get_advanced_search_form(request):
-	with open(mapping_directory+"/gsystemtype.json") as gm:
+	with open(mapping_directory+"/gsystemtype_map.json") as gm:
 		gsystemtype_map = json.load(gm)
 
 	with open(mapping_directory+"/attribute_map.json") as am:
